@@ -1,0 +1,11 @@
+{
+  "name": "josjis-code",
+  "owner": { "name": "tamaplus" },
+  "plugins": [
+    {
+      "name": "josjis-code",
+      "source": "./",
+      "description": "Agent skills for team codebases: readme, docs-init, implement, risk-scan."
+    }
+  ]
+}
