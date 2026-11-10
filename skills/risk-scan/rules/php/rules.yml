@@ -1,0 +1,25 @@
+id: php-error-suppression
+language: php
+severity: warning
+message: The @ operator hides errors.
+rule:
+  kind: error_suppression_expression
+---
+id: php-json-decode-unchecked
+language: php
+severity: hint
+message: json_decode returns null on invalid input. Use JSON_THROW_ON_ERROR or check json_last_error().
+rule:
+  pattern: json_decode($$$)
+  not:
+    regex: 'JSON_THROW_ON_ERROR'
+---
+id: php-empty-catch
+language: php
+severity: warning
+message: Empty catch block hides the error.
+rule:
+  kind: catch_clause
+  has:
+    kind: compound_statement
+    regex: '^\{\s*\}$'

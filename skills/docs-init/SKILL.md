@@ -27,6 +27,22 @@ Keep each file short and factual. Prefer tables and file paths over prose. Every
 
 If the repo already has `CLAUDE.md` and no `AGENTS.md`, create `AGENTS.md` and add one line to `CLAUDE.md` pointing to it. Never overwrite existing `CLAUDE.md` content.
 
+## Code navigation
+
+Pick the best tool available, top to bottom. Check once at the start and remember the choice.
+
+| Tier | Tool | How to detect | Use for |
+|---|---|---|---|
+| 1 | **Codegraph** | codegraph MCP tools available, or a `.codegraph/` folder in the repo | Symbols, callers/callees, call paths, blast radius |
+| 2 | **LSP** | An `LSP` tool or a symbol-aware MCP server (such as Serena) is available, and the language server for the repo's language responds | Go to definition, find references, call hierarchy |
+| 3 | **ctags** | `command -v ctags` reports universal-ctags (`ctags --version`) | Symbol map: where each type/function is defined |
+| 4 | **ripgrep / grep + reading files** | Always available | Text search, then follow imports by reading |
+
+Rules:
+- Do not install anything and do not stop to ask. If you are on tier 3 or 4, tell the user in one line, e.g. "No codegraph or LSP found; using ripgrep. Caller lists may be incomplete. Installing codegraph or a language server improves this."
+- On tier 3–4, find callers by searching for the symbol name and confirming each hit by reading it. Watch for interface/method dispatch, dependency injection, and string-based routing, which text search misses.
+- State the tier used in your final summary.
+
 ## Step 1: Detect the type
 
 Use `--type` if given. Otherwise detect with the same signals as the `readme` skill (mobile, fullstack, frontend, backend). If unclear, ask the user once. Then read `references/<type>.md` for the type-specific files and what each flow doc must cover.
@@ -38,9 +54,7 @@ Use `--type` if given. Otherwise detect with the same signals as the `readme` sk
 
 ## Step 3: Read the code
 
-Use the best tool available:
-1. **Codegraph** (if a `.codegraph/` index exists or codegraph tools are available): entry points, callers/callees, and paths from transport to storage. This is the fastest way to trace flows.
-2. Otherwise: the dependency manifest, entry files (`main.go`, `cmd/`, `src/main.*`, `app/`, `pages/`, `MainActivity`, `@main`), router/navigation registration, then follow imports.
+Start from the dependency manifest, entry files (`main.go`, `cmd/`, `src/main.*`, `app/`, `pages/`, `MainActivity`, `@main`), and router/navigation registration. Then trace each flow from entry point to storage with the navigation tier chosen above (callers/callees on tiers 1–2, search and read on tiers 3–4).
 
 Pick the flows to document: the 3–7 most important user-facing operations, chosen from route groups, screens, or queue consumers. Prefer flows that touch the most layers. List the candidates to the user and let them adjust before writing flow docs, if there are more than 7.
 

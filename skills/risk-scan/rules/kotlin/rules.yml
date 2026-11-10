@@ -1,0 +1,15 @@
+id: kt-not-null-assertion
+language: kotlin
+severity: warning
+message: "`!!` throws NullPointerException when the value is null."
+rule:
+  regex: '!!$'
+  kind: postfix_expression
+---
+id: kt-global-scope
+language: kotlin
+severity: warning
+message: GlobalScope coroutines are not tied to any lifecycle and their failures are easy to lose.
+rule:
+  kind: call_expression
+  regex: '^GlobalScope\.(launch|async)'

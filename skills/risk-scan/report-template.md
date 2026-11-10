@@ -7,7 +7,8 @@
 | Commit | `{{SHORT_SHA}}` |
 | Files scanned | {{COUNT}} |
 | Languages | {{LANGUAGES}} (checklists: {{CHECKLISTS_USED}}) |
-| Linters run | {{LINTERS_RUN}} |
+| Linters run | {{LINTERS_RUN}} (incl. ast-grep rules if run) |
+| Code navigation | {{NAV_TIER}} <!-- codegraph / LSP / ctags / ripgrep --> |
 | Linters skipped | {{LINTERS_SKIPPED_OR_NONE}} |
 | Previous report | {{PREVIOUS_REPORT_LINK_OR_NONE}} |
 

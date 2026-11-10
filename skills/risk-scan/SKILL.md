@@ -12,6 +12,22 @@ Find places where the code can fail without handling it, and report them with a 
 
 Every finding must state a concrete path to failure: **input/state → line → what breaks**. Example: "`GetUser` returns `nil, nil` when the row is missing (`repo/user.go:41`) → `handler/user.go:27` reads `u.Name` → nil pointer panic → 500 with no log." If you cannot write that sentence, drop the finding. Pattern matches alone are not findings.
 
+## Code navigation
+
+Pick the best tool available, top to bottom. Check once at the start and remember the choice.
+
+| Tier | Tool | How to detect | Use for |
+|---|---|---|---|
+| 1 | **Codegraph** | codegraph MCP tools available, or a `.codegraph/` folder in the repo | Symbols, callers/callees, call paths, blast radius |
+| 2 | **LSP** | An `LSP` tool or a symbol-aware MCP server (such as Serena) is available, and the language server for the repo's language responds | Go to definition, find references, call hierarchy |
+| 3 | **ctags** | `command -v ctags` reports universal-ctags (`ctags --version`) | Symbol map: where each type/function is defined |
+| 4 | **ripgrep / grep + reading files** | Always available | Text search, then follow imports by reading |
+
+Rules:
+- Do not install anything and do not stop to ask. If you are on tier 3 or 4, tell the user in one line, e.g. "No codegraph or LSP found; using ripgrep. Caller lists may be incomplete. Installing codegraph or a language server improves this."
+- On tier 3–4, find callers by searching for the symbol name and confirming each hit by reading it. Watch for interface/method dispatch, dependency injection, and string-based routing, which text search misses.
+- State the tier used in your final summary.
+
 ## Step 1: Scope
 
 | Invocation | Files scanned | Report name |
@@ -54,10 +70,22 @@ Each checklist lists linters. For each one relevant to the scope:
 
 Run installed linters on the scoped files only. Treat linter output as leads, not findings: confirm each one against rule zero, and drop false positives.
 
+### ast-grep rules
+
+This skill ships cross-language pattern rules in `rules/` (one folder per language, wired by `rules/sgconfig.yml`). They complement language linters and work even where none is configured.
+
+1. Check `command -v ast-grep` (or `sg`). If missing, include it in the missing-tools warning above with the install command: `brew install ast-grep`, `npm i -g @ast-grep/cli`, `pip install ast-grep-cli`, or `cargo install ast-grep --locked`.
+2. Run from the target repo root, on the scoped files only:
+   ```sh
+   ast-grep scan -c <this-skill-dir>/rules/sgconfig.yml --json=stream <files...>
+   ```
+3. Each hit has a `ruleId`, `severity` (`warning` = likely issue, `hint` = needs context), and a message. Hits are leads like linter output: confirm each against rule zero before it becomes a finding. `hint` rules are noisy by design; most will be dropped.
+4. If ast-grep is skipped, list it under "Linters skipped".
+
 ## Step 4: Context
 
 - **Docs**: read `AGENTS.md`, `docs/conventions.md`, or similar for the team's error-handling rules (global recover middleware, error boundaries, a result type). A risk already covered by a documented global handler is downgraded, not dropped. Say what covers it.
-- **Codegraph** (if available): use callers to rank. Code reachable from an HTTP handler, message consumer, UI event, or many call sites ranks higher than a rarely used helper.
+- **Reachability** (navigation tier chosen above): use callers to rank. Code reachable from an HTTP handler, message consumer, UI event, or many call sites ranks higher than a rarely used helper.
 
 ## Step 5: Analyze
 

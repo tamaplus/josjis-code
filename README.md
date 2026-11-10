@@ -54,14 +54,30 @@ Each skill is a folder under `skills/` with a `SKILL.md`. Copy the folders into 
 
 ## Optional tools
 
-- **Codegraph**: if a code graph index is available, `docs-init`, `implement`, and `risk-scan` use it to trace flows and rank risk by reachability. Without it they fall back to search and reading files.
-- **Linters**: `risk-scan` runs language linters when installed (golangci-lint, staticcheck, errcheck, nilaway, eslint, tsc, ruff, mypy, clippy, SwiftLint, detekt, PHPStan, ...). If missing, it tells you and asks before continuing without them. It never installs anything.
+None are required. Each skill picks the best available and says which it used.
+
+**Code navigation** (used by all four skills, in this order):
+
+| Tier | Tool | Gives |
+|---|---|---|
+| 1 | Codegraph (MCP server) | Callers, callees, call paths, blast radius |
+| 2 | LSP (gopls, typescript-language-server, pyright, ...) or a symbol MCP such as [Serena](https://github.com/oraios/serena) | Definitions, references, call hierarchy |
+| 3 | [universal-ctags](https://github.com/universal-ctags/ctags) | Symbol map |
+| 4 | ripgrep / grep | Text search (always available) |
+
+On tiers 3–4 the skill tells you caller lists may be incomplete.
+
+**Scanning** (`risk-scan`):
+- [ast-grep](https://ast-grep.github.io): runs the bundled pattern rules in `skills/risk-scan/rules/` for Go, JS/TS, Python, Java, Kotlin, Rust, Swift, C#, PHP.
+- Language linters when installed: golangci-lint, staticcheck, errcheck, nilaway, eslint, tsc, ruff, mypy, clippy, SwiftLint, detekt, PHPStan, ...
+
+If a scanner is missing, `risk-scan` tells you and asks before continuing without it. No skill ever installs anything.
 
 ## Language support (risk-scan)
 
 JavaScript/TypeScript (Node, React, Vue, Next, Nuxt), Python, Java/Kotlin (incl. Android), Go, C#, PHP, Rust, Swift. Other languages get the language-agnostic core checklist.
 
-Contributions of new checklists are welcome: add `skills/risk-scan/checklists/<language>.md` and a row in the table in `skills/risk-scan/SKILL.md`.
+Contributions of new checklists are welcome: add `skills/risk-scan/checklists/<language>.md`, optional ast-grep rules in `skills/risk-scan/rules/<language>/`, and a row in the table in `skills/risk-scan/SKILL.md`.
 
 ## What these skills never do
 

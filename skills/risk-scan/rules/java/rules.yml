@@ -1,0 +1,16 @@
+id: java-empty-catch
+language: java
+severity: warning
+message: Empty catch block hides the error.
+rule:
+  kind: catch_clause
+  has:
+    kind: block
+    regex: '^\{\s*\}$'
+---
+id: java-print-stack-trace
+language: java
+severity: hint
+message: printStackTrace then continue. The error is not handled or logged properly.
+rule:
+  pattern: $E.printStackTrace()

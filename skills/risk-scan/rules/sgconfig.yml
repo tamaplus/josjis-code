@@ -1,0 +1,14 @@
+# ast-grep config for risk-scan. Run from the target repo:
+#   ast-grep scan -c <skill-dir>/rules/sgconfig.yml --json=stream <paths>
+ruleDirs:
+  - go
+  - javascript
+  - python
+  - java
+  - kotlin
+  - rust
+  - swift
+  - csharp
+  - php
+languageGlobs:
+  tsx: ["*.ts", "*.tsx", "*.js", "*.jsx", "*.mjs", "*.cjs", "*.mts", "*.cts"]

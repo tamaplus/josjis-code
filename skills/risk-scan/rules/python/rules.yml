@@ -1,0 +1,38 @@
+id: py-bare-except
+language: python
+severity: warning
+message: Bare except catches everything, including KeyboardInterrupt and programming errors.
+rule:
+  kind: except_clause
+  regex: '^except\s*:'
+---
+id: py-except-pass
+language: python
+severity: warning
+message: Exception caught and ignored.
+rule:
+  kind: except_clause
+  has:
+    kind: block
+    regex: '^pass\s*$'
+---
+id: py-requests-without-timeout
+language: python
+severity: warning
+message: requests has no default timeout. A slow upstream blocks forever.
+rule:
+  pattern: requests.$M($$$)
+  not:
+    regex: 'timeout\s*='
+constraints:
+  M:
+    regex: '^(get|post|put|patch|delete|head|request)$'
+---
+id: py-create-task-dropped
+language: python
+severity: warning
+message: Task result is not kept. Exceptions are lost and the task can be garbage-collected.
+rule:
+  pattern: asyncio.create_task($$$)
+  inside:
+    kind: expression_statement

@@ -8,6 +8,22 @@ argument-hint: "<what to build or change>"
 
 Make the change the way this codebase already does things. The order of authority is: **docs → code graph → existing code**. Never introduce a new pattern when the repo already has one for the same job.
 
+## Code navigation
+
+Pick the best tool available, top to bottom. Check once at the start and remember the choice.
+
+| Tier | Tool | How to detect | Use for |
+|---|---|---|---|
+| 1 | **Codegraph** | codegraph MCP tools available, or a `.codegraph/` folder in the repo | Symbols, callers/callees, call paths, blast radius |
+| 2 | **LSP** | An `LSP` tool or a symbol-aware MCP server (such as Serena) is available, and the language server for the repo's language responds | Go to definition, find references, call hierarchy |
+| 3 | **ctags** | `command -v ctags` reports universal-ctags (`ctags --version`) | Symbol map: where each type/function is defined |
+| 4 | **ripgrep / grep + reading files** | Always available | Text search, then follow imports by reading |
+
+Rules:
+- Do not install anything and do not stop to ask. If you are on tier 3 or 4, tell the user in one line, e.g. "No codegraph or LSP found; using ripgrep. Caller lists may be incomplete. Installing codegraph or a language server improves this."
+- On tier 3–4, find callers by searching for the symbol name and confirming each hit by reading it. Watch for interface/method dispatch, dependency injection, and string-based routing, which text search misses.
+- State the tier used in your final summary.
+
 ## Step 1: Understand the request
 
 Restate the change in one or two sentences. If the request is ambiguous about behavior (not about implementation details), ask before reading code.
@@ -25,9 +41,9 @@ If no docs exist, tell the user once: "No project docs found. I'll follow existi
 
 ## Step 3: Read the code
 
-Use the best tool available:
-1. **Codegraph** if available: find the symbols the change touches, their callers (blast radius), and the closest existing feature to copy from.
-2. Otherwise: search for the closest existing feature (same kind of endpoint, screen, job) and read it end to end.
+With the navigation tier chosen above:
+- Find the symbols the change touches and their callers (blast radius).
+- Find the closest existing feature (same kind of endpoint, screen, job) and read it end to end.
 
 Always find **one or two existing examples of the same kind of change** and treat them as the template: folder placement, naming, layering, error handling, tests.
 

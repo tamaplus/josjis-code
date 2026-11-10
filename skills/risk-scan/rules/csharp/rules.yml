@@ -1,0 +1,24 @@
+id: cs-async-void
+language: csharp
+severity: warning
+message: async void methods crash the process on exceptions. Use async Task (event handlers excepted).
+rule:
+  kind: method_declaration
+  regex: '\basync\s+void\b'
+---
+id: cs-empty-catch
+language: csharp
+severity: warning
+message: Empty catch block hides the error.
+rule:
+  kind: catch_clause
+  has:
+    kind: block
+    regex: '^\{\s*\}$'
+---
+id: cs-blocking-wait
+language: csharp
+severity: hint
+message: Blocking on a task can deadlock and wraps errors in AggregateException.
+rule:
+  pattern: $T.Wait()

@@ -1,0 +1,15 @@
+id: swift-force-try
+language: swift
+severity: warning
+message: try! crashes when the call throws.
+rule:
+  kind: try_expression
+  regex: '^try!'
+---
+id: swift-force-cast
+language: swift
+severity: warning
+message: as! crashes when the cast fails.
+rule:
+  kind: as_expression
+  regex: 'as!'

@@ -14,6 +14,22 @@ Produce a README that follows a fixed template, filled with facts read from the 
 - `--diff`: update only the sections affected by changes on the current branch.
 - No arguments: detect the type, then create or complete the README.
 
+## Code navigation
+
+Pick the best tool available, top to bottom. Check once at the start and remember the choice.
+
+| Tier | Tool | How to detect | Use for |
+|---|---|---|---|
+| 1 | **Codegraph** | codegraph MCP tools available, or a `.codegraph/` folder in the repo | Symbols, callers/callees, call paths, blast radius |
+| 2 | **LSP** | An `LSP` tool or a symbol-aware MCP server (such as Serena) is available, and the language server for the repo's language responds | Go to definition, find references, call hierarchy |
+| 3 | **ctags** | `command -v ctags` reports universal-ctags (`ctags --version`) | Symbol map: where each type/function is defined |
+| 4 | **ripgrep / grep + reading files** | Always available | Text search, then follow imports by reading |
+
+Rules:
+- Do not install anything and do not stop to ask. If you are on tier 3 or 4, tell the user in one line, e.g. "No codegraph or LSP found; using ripgrep. Caller lists may be incomplete. Installing codegraph or a language server improves this."
+- On tier 3–4, find callers by searching for the symbol name and confirming each hit by reading it. Watch for interface/method dispatch, dependency injection, and string-based routing, which text search misses.
+- State the tier used in your final summary.
+
 ## Step 1: Pick the template
 
 Use the first that applies:
@@ -71,7 +87,7 @@ If signals conflict or are weak, ask the user once, showing what you found. Do n
 
 - **Description, features**: existing docs (`docs/`, `AGENTS.md`), package description fields, top-level route/screen groups. If the purpose is not stated anywhere, ask the user instead of summarizing code.
 - **Tech stack**: dependency manifests only. Include versions from the manifest.
-- **Architecture, diagram**: folder layout and import direction between layers. Use codegraph if available to confirm call direction.
+- **Architecture, diagram**: folder layout and import direction between layers. Confirm call direction with the navigation tier chosen above.
 - **API Producer**: route registrations (router files, decorators, `app/api/**`, OpenAPI spec if present).
 - **API Consumer**: outbound clients, base URL config keys.
 - **Database**: migrations first, then ORM models.

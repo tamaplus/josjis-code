@@ -1,0 +1,71 @@
+id: js-empty-catch
+language: tsx
+severity: warning
+message: Empty catch block hides the error.
+rule:
+  kind: catch_clause
+  has:
+    field: body
+    regex: '^\{\s*\}$'
+---
+id: js-json-parse-without-try
+language: tsx
+severity: warning
+message: JSON.parse throws on invalid input. Not inside a try block.
+rule:
+  pattern: JSON.parse($$$)
+  not:
+    inside:
+      kind: try_statement
+      stopBy:
+        any:
+          - kind: function_declaration
+          - kind: arrow_function
+          - kind: method_definition
+---
+id: js-async-foreach
+language: tsx
+severity: warning
+message: forEach ignores the promises returned by an async callback. Rejections are unhandled and nothing waits.
+rule:
+  pattern: $A.forEach($CB)
+  has:
+    kind: arguments
+    has:
+      any:
+        - kind: arrow_function
+        - kind: function_expression
+      regex: '^async'
+---
+id: js-async-useeffect
+language: tsx
+severity: warning
+message: useEffect callback cannot be async. Its promise (and errors) are ignored.
+rule:
+  pattern: useEffect($CB, $$$)
+  has:
+    kind: arguments
+    has:
+      kind: arrow_function
+      regex: '^async'
+---
+id: js-parseint-without-radix
+language: tsx
+severity: hint
+message: parseInt without radix. Also check for NaN on external input.
+rule:
+  pattern: parseInt($A)
+---
+id: js-fetch-unchecked-status
+language: tsx
+severity: hint
+message: fetch does not throw on 4xx/5xx. Confirm `res.ok` or status is checked before using the body.
+rule:
+  pattern: await fetch($$$)
+---
+id: ts-non-null-assertion
+language: tsx
+severity: hint
+message: Non-null assertion. Crashes at runtime if the value is null or undefined.
+rule:
+  kind: non_null_expression

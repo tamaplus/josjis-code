@@ -1,0 +1,68 @@
+id: go-type-assertion-without-ok
+language: go
+severity: warning
+message: Type assertion without the `ok` check panics when the type does not match.
+rule:
+  any:
+    - pattern: $V := $X.($T)
+    - pattern: $V = $X.($T)
+  not:
+    regex: '^[^=]*,'
+---
+id: go-error-discarded
+language: go
+severity: warning
+message: Result assigned to `_`. If this is an error, it is silently ignored.
+rule:
+  pattern: _ = $F($$$)
+---
+id: go-http-default-client
+language: go
+severity: warning
+message: Default HTTP client has no timeout. A slow upstream blocks this call forever.
+rule:
+  any:
+    - kind: call_expression
+      regex: '^http\.(Get|Post|PostForm|Head|DefaultClient\.Do)\('
+    - kind: composite_literal
+      regex: '^http\.Client\{\s*\}$'
+---
+id: go-goroutine-without-recover
+language: go
+severity: warning
+message: A panic inside this goroutine crashes the whole process. Add a deferred recover if it runs in a server.
+rule:
+  pattern: go func($$$) { $$$ }($$$)
+  not:
+    has:
+      pattern: recover()
+      stopBy: end
+---
+id: go-split-index
+language: go
+severity: warning
+message: Indexing the result of a split panics when the separator is missing.
+rule:
+  any:
+    - pattern: strings.Split($$$)[$I]
+    - pattern: strings.SplitN($$$)[$I]
+    - pattern: strings.Fields($$$)[$I]
+---
+id: go-defer-in-loop
+language: go
+severity: hint
+message: Defer inside a loop runs at function exit, not at the end of each iteration. Resources stay open.
+rule:
+  kind: defer_statement
+  inside:
+    kind: for_statement
+    stopBy:
+      kind: func_literal
+---
+id: go-panic-call
+language: go
+severity: hint
+message: Explicit panic. Confirm it cannot be reached from request handling.
+rule:
+  kind: call_expression
+  regex: '^(panic|log\.Fatal|log\.Fatalf|log\.Fatalln|log\.Panic|log\.Panicf)\('

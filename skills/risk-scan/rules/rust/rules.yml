@@ -1,0 +1,23 @@
+id: rs-unwrap
+language: rust
+severity: warning
+message: unwrap/expect panics on None or Err. Confirm the value cannot fail here.
+rule:
+  any:
+    - pattern: $X.unwrap()
+    - pattern: $X.expect($$$)
+---
+id: rs-panic-macro
+language: rust
+severity: hint
+message: Panicking macro in code that may be reachable.
+rule:
+  kind: macro_invocation
+  regex: '^(panic|todo|unimplemented|unreachable)!'
+---
+id: rs-result-discarded
+language: rust
+severity: warning
+message: Result discarded with `let _`. The error is silently ignored.
+rule:
+  pattern: let _ = $E;
