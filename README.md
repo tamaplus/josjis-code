@@ -2,7 +2,7 @@
   <img src="assets/logo.png" alt="josjis-code" width="480">
 </p>
 
-Agent skills for team codebases. Four skills that work together:
+Agent skills for team codebases. Four skills that work together, plus a brand helper:
 
 | Skill | What it does |
 |---|---|
@@ -10,6 +10,7 @@ Agent skills for team codebases. Four skills that work together:
 | `docs-init` | Bootstraps agent-ready docs in `docs/` plus an `AGENTS.md` entry point: architecture, folder map, conventions, and end-to-end flows. Marks what it cannot derive from code and asks you. |
 | `implement` | Adds or changes a feature following docs first, then the code graph, then existing code patterns. Stops on doc/code conflicts, warns before large changes, updates docs afterwards. |
 | `risk-scan` | Finds unhandled errors and crash/panic risks. Scans your branch diff, the whole repo (`--all`), or a path. Writes a dated report to `docs/risk-scan/` and tracks what got resolved. |
+| `brand-pack` | Writes ready-to-paste ChatGPT image prompts for a product's logo, icon, small mark, horizontal logo and OG image. Optionally turns the PNGs you bring back into SVGs, favicons, app icons and a `docs/brand.md`. |
 
 ```
 docs-init ──► docs/ ──► implement (follows docs, then updates them)
@@ -45,6 +46,8 @@ Each skill is a folder under `skills/` with a `SKILL.md`. Copy the folders into 
 /josjis-code:risk-scan                  # scan branch diff
 /josjis-code:risk-scan --all            # scan whole repo (asks first)
 /josjis-code:risk-scan services/payment # scan a path
+
+/josjis-code:brand-pack                 # logo + brand asset prompts for ChatGPT
 ```
 
 ## Customizing

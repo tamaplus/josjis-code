@@ -1,7 +1,7 @@
 {
   "name": "josjis-code",
   "version": "0.1.0",
-  "description": "Agent skills for team codebases: README from templates, agent-ready docs, doc-guided implementation, and risk scanning for unhandled errors and panics.",
+  "description": "Agent skills for team codebases: README from templates, agent-ready docs, doc-guided implementation, and risk scanning for unhandled errors and panics, plus brand asset prompts.",
   "author": { "name": "tamaplus" },
   "homepage": "https://github.com/tamaplus/josjis-code",
   "repository": "https://github.com/tamaplus/josjis-code",
